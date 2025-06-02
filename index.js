@@ -1,15 +1,17 @@
 require('dotenv').config();
 const express = require('express');
 const {connectDB} = require('./src/config/db');
-const carsRouter = require('./src/api/routes/car');
-const carDealershipsRouter = require('./src/api/routes/carDealership');
+const usersRouter = require('./src/api/routes/user');
+const housesRouter = require('./src/api/routes/house');
+const NeighborhoodsRouter = require('./src/api/routes/neighborhood');
 
 const app = express();
 
 app.use(express.json());
 
-app.use("/api/v1/cars", carsRouter)
-app.use("/api/v1/carDealerships", carDealershipsRouter)
+app.use("/api/v1/users", usersRouter)
+app.use("/api/v1/house", housesRouter)
+app.use("/api/v1/Neighborhoods", NeighborhoodsRouter)
 
 connectDB();
 
