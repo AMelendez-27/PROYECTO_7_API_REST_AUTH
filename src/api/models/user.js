@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema(
     email: {type: String, required: true},
     password: {type: String, required: true},
     houses: [{type: mongoose.Schema.Types.ObjectId, ref: 'houses'}],
+    rol: { type: String, enum: ["user", "admin"] }
   },
   {
     timestamps: true, 

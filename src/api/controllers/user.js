@@ -1,3 +1,4 @@
+const { generateKey } = require('../../config/jwt');
 const houses = require('../../data/house');
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
@@ -7,7 +8,8 @@ const register = async (req, res, next) => {
     const newUser = new User({
       email: req.body.email,
       password: req.body.password,
-      houses: req.body.houses
+      houses: req.body.houses,
+      rol: "user"
     });
     const existingUser = await User.findOne({ email: newUser.email });
 
@@ -30,9 +32,10 @@ const login = async (req, res, next) => {
 
     if (user) {
       const loginPassword = req.body.password;
-      const comparePasswords = await bcrypt.compare(loginPassword, user.password);
+      const comparePasswords = await bcrypt.compareSync(loginPassword, user.password);
       if (comparePasswords) {
-        return res.status(200).json("Login successful");
+        const token = generateKey(user._id);
+        return res.status(200).json({user, token});
       } else {
         return res.status(400).json("Incorrect email or password");
       }
@@ -83,12 +86,16 @@ const postUser = async (req, res, next) => {
 const updateUser = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const oldUser = await User.findById(id);
 
-    const newUser = new User(req.body);
-    newUser._id = id;
+    if (oldUser.rol === "admin") {
+      return res.status(400).json("You cannot update an admin user");
+    }
 
-    const userUpdated = await User.findByIdAndUpdate(id, newUser, { new: true })
+    const update = req.body;
+    const userUpdated = await User.findByIdAndUpdate(id, update, { new: true });
     return res.status(200).json(userUpdated);
+    
   } catch (error) {
     return res.status(400).json("error");
   }
