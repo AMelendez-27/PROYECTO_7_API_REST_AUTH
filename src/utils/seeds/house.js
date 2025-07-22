@@ -12,11 +12,11 @@ const launchSeed = async () => {
 
     await House.insertMany(houses);
     console.log("Houses seeded successfully");
-
-    await mongoose.disconnect();
-    console.log("Database disconnected successfully");
   } catch (error) {
     console.error(error);
+  } finally {
+    await mongoose.disconnect();
+    console.log("Database disconnected successfully");
   }
 }
 

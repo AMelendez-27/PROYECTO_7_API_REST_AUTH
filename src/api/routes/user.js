@@ -7,7 +7,7 @@ usersRouter.post('/login', login);
 usersRouter.get('/', getUsers);
 usersRouter.get('/:id', getUserById);
 usersRouter.post('/', postUser);
-usersRouter.put('/:id', [isAdmin], updateUser);
+usersRouter.put('/:id', [isAuth, isAdmin], updateUser);
 usersRouter.delete('/:id', [isAuth], deleteUser);
 
 module.exports = usersRouter;

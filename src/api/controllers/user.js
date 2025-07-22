@@ -32,7 +32,7 @@ const login = async (req, res, next) => {
 
     if (user) {
       const loginPassword = req.body.password;
-      const comparePasswords = await bcrypt.compareSync(loginPassword, user.password);
+      const comparePasswords = bcrypt.compareSync(loginPassword, user.password);
       if (comparePasswords) {
         const token = generateKey(user._id);
         return res.status(200).json({user, token});
@@ -68,7 +68,11 @@ const getUserById = async (req, res, next) => {
 
 const postUser = async (req, res, next) => {
   try {
-    const newUser = new User(req.body);
+    // Forzar el rol a 'user' al crear el usuario
+    const newUser = new User({
+      ...req.body,
+      rol: "user"
+    });
     const existingUser = await User.findOne({ email: newUser.email });
 
     if (existingUser) {
