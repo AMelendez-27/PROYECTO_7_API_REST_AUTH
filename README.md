@@ -1,4 +1,4 @@
-# PROJECT 6: API REST
+# PROJECT 7: API REST AUTH
 ## _thePower - Desarrollo Full Stack_
 
 ## Description
