@@ -108,6 +108,28 @@ const updateUser = async (req, res, next) => {
 const deleteUser = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const userToDelete = await User.findById(id);
+    if (!userToDelete) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    // req.user debe estar seteado por el middleware isAuth
+    const requester = req.user;
+    if (!requester) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    // Si el que hace la petición es admin
+    if (requester.rol === "admin") {
+      // Admin no puede eliminar a otro admin (pero sí a sí mismo)
+      if (userToDelete.rol === "admin" && requester.id !== userToDelete.id) {
+        return res.status(403).json({ message: "Admins cannot delete other admins" });
+      }
+      // Puede eliminarse a sí mismo o a cualquier user
+    } else {
+      // Si no es admin, solo puede eliminarse a sí mismo
+      if (requester.id !== userToDelete.id) {
+        return res.status(403).json({ message: "You can only delete your own user" });
+      }
+    }
     const userDeleted = await User.findByIdAndDelete(id);
     return res.status(200).json({
       message: "User deleted successfully",
